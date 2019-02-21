@@ -10,67 +10,81 @@
 	var suite = new Benchmark.Suite;
 
 	Benchmark.prototype.setup = function () {
-		function stnd_tanh(x) {
-		    return (Math.exp(x) - Math.exp(-x)) / (Math.exp(-x) + Math.exp(x));
-		}
-		
-		function stnd_cached_tanh(x) {
-		    const power = Math.exp(x);
-		    
-		    return (power - 1/power) / (1/power + power);
-		}
-		
-		function stnd_dcached_tanh(x) {
-		    const power = Math.exp(x);
-		    const power2 = 1 / power;
-		    
-		    return (power - power2) / (power2 + power);
-		}
-		
-		function simp_tanh(x) {
-		    return 1 - (2 / (Math.exp(2*x) + 1));
-		}
-		
-		function est_tanh(x) {
-		    return 1 - (2 / (Math.pow(2*x, 2.71828182) + 1));
-		}
+		function charFindWhileLoop(value, target) {
+                        let i = (value.length - 1)|0;
+
+                        do {
+                                if (value[i] === target[0])
+                                        return i;
+                        } while (--i >= 0);
+
+                        return -1;
+                }
+
+                function charFindForLoop(value, target) {
+                        for (let i = 0; i < value.length; i++) {
+                                if (value[i] === target[0])
+                                        return i;
+                        }
+
+                        return -1;
+                }
+
+                const searchString = "abcdefghijklmnopqrstuvwxyz0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZ";
 	};
 
+	suite.add("String.indexOf, near start", function () {
+		/** String.indexOf **/
 
-	suite.add("Standard", function () {
-		/** Standard **/
-		
-		return stnd_tanh(Math.random());
+		return searchString.indexOf("d");
 	});
 
-	suite.add("Standard + Cached", function () {
-		/** Standard + Cached **/
-		
-		return stnd_cached_tanh(Math.random());
+	suite.add("String.indexOf, near middle", function () {
+		/** String.indexOf **/
+
+		return searchString.indexOf("5");
 	});
 
-	suite.add("Standard + Double Cached", function () {
-		/** Standard + Double Cached **/
-		
-		return stnd_dcached_tanh(Math.random());
+	suite.add("String.indexOf, near end", function () {
+		/** String.indexOf **/
+
+		return searchString.indexOf("Y");
 	});
 
-	suite.add("Built-in function", function () {
-		/** Built-in function **/
-		
-		return Math.tanh(Math.random());
+	suite.add("While-loop, near start", function () {
+		/** While-loop **/
+
+		return charFindWhileLoop(searchString, "d");
 	});
 
-	suite.add("Simplified Math", function () {
-		/** Simplified Math **/
-		
-		return simp_tanh(Math.random());
+	suite.add("While-loop, near middle", function () {
+		/** While-loop **/
+
+		return charFindWhileLoop(searchString, "5");
 	});
 
-	suite.add("Approximate tanh", function () {
-		/** Approximate tanh **/
-		
-		return est_tanh(Math.random());
+	suite.add("While-loop, near end", function () {
+		/** While-loop **/
+
+		return charFindWhileLoop(searchString, "Y");
+	});
+
+	suite.add("For-loop, near start", function () {
+		/** For-loop **/
+
+		return charFindForLoop(searchString, "d");
+	});
+
+	suite.add("For-loop, near middle", function () {
+		/** For-loop **/
+
+		return charFindForLoop(searchString, "5");
+	});
+
+	suite.add("For-loop, near end", function () {
+		/** For-loop **/
+
+		return charFindForLoop(searchString, "Y");
 	});
 
 	suite.on("cycle", function (evt) {
@@ -89,7 +103,7 @@
 		});
 	});
 
-	console.log("Tanh implementations");
+	console.log("Character Search");
 	console.log(new Array(30).join("-"));
 	suite.run();
 });
